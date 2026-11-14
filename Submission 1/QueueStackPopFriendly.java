@@ -1,4 +1,3 @@
-```java
 package Submission01;
 
 import java.util.Queue;
@@ -65,4 +64,4 @@ public class QueueStackPopFriendly<E> {
         System.out.println("Current size: " + stack.size());
     }
 }
-```
+
