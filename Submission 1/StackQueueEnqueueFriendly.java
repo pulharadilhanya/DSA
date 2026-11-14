@@ -1,59 +1,86 @@
-import java.util.ArrayDeque;
+package Submission01;
+
 import java.util.Deque;
-import java.util.NoSuchElementException;
+import java.util.ArrayDeque;
 
-/** A FIFO queue made from two stacks. Enqueue is fast; dequeue moves items. */
 public class StackQueueEnqueueFriendly<E> {
-    private final Deque<E> main = new ArrayDeque<>();
-    private final Deque<E> helper = new ArrayDeque<>();
 
-    /** Adds an item at the back of the queue. Runs in O(1). */
-    public void enqueue(E item) {
-        main.push(item);
+    private Deque<E> stack1 = new ArrayDeque<>();
+    private Deque<E> stack2 = new ArrayDeque<>();
+
+    // Enqueue element
+    public void enqueue(E element) {
+        stack1.push(element);
     }
 
-    /** Removes and returns the oldest item. Runs in O(n). */
+    // Dequeue element
     public E dequeue() {
-        requireNotEmpty();
-        moveNewestItemsToHelper();
-        E oldest = main.pop();
-        restoreItems();
+
+        if (stack1.isEmpty()) {
+            System.out.println("Queue is empty");
+            return null;
+        }
+
+        while (stack1.size() > 1) {
+            stack2.push(stack1.pop());
+        }
+
+        E oldest = stack1.pop();
+
+        while (!stack2.isEmpty()) {
+            stack1.push(stack2.pop());
+        }
+
         return oldest;
     }
 
-    /** Returns the oldest item without removing it. Runs in O(n). */
+    // Peek front element
     public E peek() {
-        requireNotEmpty();
-        moveNewestItemsToHelper();
-        E oldest = main.pop();
-        helper.push(oldest);
-        restoreItems();
+
+        if (stack1.isEmpty()) {
+            return null;
+        }
+
+        while (stack1.size() > 1) {
+            stack2.push(stack1.pop());
+        }
+
+        E oldest = stack1.pop();
+        stack2.push(oldest);
+
+        while (!stack2.isEmpty()) {
+            stack1.push(stack2.pop());
+        }
+
         return oldest;
     }
 
+    // Check whether queue is empty
     public boolean isEmpty() {
-        return main.isEmpty();
+        return stack1.isEmpty();
     }
 
+    // Return current number of elements
     public int size() {
-        return main.size();
+        return stack1.size();
     }
 
-    private void moveNewestItemsToHelper() {
-        while (main.size() > 1) {
-            helper.push(main.pop());
-        }
-    }
+    // Main method
+    public static void main(String[] args) {
 
-    private void restoreItems() {
-        while (!helper.isEmpty()) {
-            main.push(helper.pop());
-        }
-    }
+        StackQueueEnqueueFriendly<Integer> queue =
+                new StackQueueEnqueueFriendly<>();
 
-    private void requireNotEmpty() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("Queue is empty");
-        }
+        queue.enqueue(10);
+        queue.enqueue(20);
+        queue.enqueue(30);
+
+        System.out.println("Front element: " + queue.peek());
+
+        System.out.println("Dequeued: " + queue.dequeue());
+
+        System.out.println("Is queue empty? " + queue.isEmpty());
+
+        System.out.println("Current size: " + queue.size());
     }
 }
