@@ -1,50 +1,68 @@
-import java.util.ArrayDeque;
-import java.util.NoSuchElementException;
+```java
+package Submission01;
+
 import java.util.Queue;
+import java.util.ArrayDeque;
 
-/** A stack made from two queues. Pop is fast; push moves existing items. */
 public class QueueStackPopFriendly<E> {
-    private Queue<E> main = new ArrayDeque<>();
-    private Queue<E> helper = new ArrayDeque<>();
 
-    /** Adds an item to the top of the stack. Runs in O(n). */
-    public void push(E item) {
-        helper.offer(item);
-        while (!main.isEmpty()) {
-            helper.offer(main.remove());
+    private Queue<E> queue1 = new ArrayDeque<>();
+    private Queue<E> queue2 = new ArrayDeque<>();
+
+    // Push element
+    public void push(E element) {
+
+        queue2.add(element);
+
+        while (!queue1.isEmpty()) {
+            queue2.add(queue1.remove());
         }
-        swapQueues();
+
+        Queue<E> temp = queue1;
+        queue1 = queue2;
+        queue2 = temp;
     }
 
-    /** Removes and returns the top item. Runs in O(1). */
+    // Pop top element
     public E pop() {
-        requireNotEmpty();
-        return main.remove();
-    }
 
-    /** Returns the top item without removing it. Runs in O(1). */
-    public E peek() {
-        requireNotEmpty();
-        return main.element();
-    }
-
-    public boolean isEmpty() {
-        return main.isEmpty();
-    }
-
-    public int size() {
-        return main.size();
-    }
-
-    private void requireNotEmpty() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("Stack is empty");
+        if (queue1.isEmpty()) {
+            System.out.println("Stack is empty");
+            return null;
         }
+
+        return queue1.remove();
     }
 
-    private void swapQueues() {
-        Queue<E> oldMain = main;
-        main = helper;
-        helper = oldMain;
+    // Peek top element
+    public E peek() {
+        return queue1.peek();
+    }
+
+    // Check whether stack is empty
+    public boolean isEmpty() {
+        return queue1.isEmpty();
+    }
+
+    // Return current number of elements
+    public int size() {
+        return queue1.size();
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        QueueStackPopFriendly<Integer> stack =
+                new QueueStackPopFriendly<>();
+
+        stack.push(5);
+        stack.push(10);
+        stack.push(15);
+
+        System.out.println("Top element: " + stack.peek());
+        System.out.println("Popped: " + stack.pop());
+        System.out.println("Is stack empty? " + stack.isEmpty());
+        System.out.println("Current size: " + stack.size());
     }
 }
+```
