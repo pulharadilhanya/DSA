@@ -1,62 +1,93 @@
-import java.util.NoSuchElementException;
+package Submission01;
 
-/** An array-backed stack that grows when full and shrinks when half empty. */
-public class UnboundedArrayStack<E> {
-    private static final int MIN_CAPACITY = 2;
-    private Object[] items = new Object[MIN_CAPACITY];
-    private int size;
+public class UnboundedArrayStack {
 
-    /** Adds an item. The array doubles when there is no free slot. */
-    public void push(E item) {
-        if (size == items.length) {
-            resize(items.length * 2);
-        }
-        items[size++] = item;
+    private int[] arr;
+    private int top;
+
+    // Constructor
+    public UnboundedArrayStack() {
+        arr = new int[4];
+        top = -1;
     }
 
-    /** Removes and returns the top item. */
-    @SuppressWarnings("unchecked")
-    public E pop() {
-        requireNotEmpty();
-        int topIndex = --size;
-        E item = (E) items[topIndex];
-        items[topIndex] = null; // Release the reference so it can be garbage-collected.
-
-        if (items.length > MIN_CAPACITY && size <= items.length / 2) {
-            resize(Math.max(MIN_CAPACITY, items.length / 2));
-        }
-        return item;
-    }
-
-    /** Returns the top item without removing it. */
-    @SuppressWarnings("unchecked")
-    public E peek() {
-        requireNotEmpty();
-        return (E) items[size - 1];
-    }
-
+    // Check whether stack is empty
     public boolean isEmpty() {
-        return size == 0;
+        return top == -1;
     }
 
-    public int size() {
-        return size;
-    }
+    // Expand the array when full
+    private void expandArray() {
 
-    /** Current storage capacity, included to make resizing easy to observe. */
-    public int capacity() {
-        return items.length;
-    }
+        int newSize = arr.length * 2;
+        int[] newArr = new int[newSize];
 
-    private void requireNotEmpty() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("Stack is empty");
+        for (int i = 0; i < arr.length; i++) {
+            newArr[i] = arr[i];
         }
+
+        arr = newArr;
     }
 
-    private void resize(int newCapacity) {
-        Object[] biggerOrSmaller = new Object[newCapacity];
-        System.arraycopy(items, 0, biggerOrSmaller, 0, size);
-        items = biggerOrSmaller;
+    // Push element to the stack
+    public void push(int y) {
+
+        if (top == arr.length - 1) {
+            expandArray();
+        }
+
+        arr[++top] = y;
+    }
+
+    // Pop element from the stack
+    public int pop() {
+
+        if (isEmpty()) {
+            System.out.println("STACK EMPTY - can't pop");
+            return -1;
+        }
+
+        return arr[top--];
+    }
+
+    // Peek top element
+    public int peek() {
+
+        if (isEmpty()) {
+            System.out.println("STACK IS EMPTY");
+            return -1;
+        }
+
+        return arr[top];
+    }
+
+    // Return current number of elements
+    public int size() {
+        return top + 1;
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        UnboundedArrayStack stack = new UnboundedArrayStack();
+
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+        stack.push(4);
+        stack.push(5);
+        stack.push(6);
+
+        System.out.println("Top element: " + stack.peek());
+        System.out.println("Stack size: " + stack.size());
+
+        stack.pop();
+        stack.pop();
+        stack.pop();
+        stack.pop();
+        stack.pop();
+        stack.pop();
+
+        stack.pop();
     }
 }
